@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TplDemo</name>
+    </assembly>
+    <members>
+        <member name="M:TplDemo.Helper.Swagger.SwaggerMiddle.UseSwaggerMiddle(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.Func{System.IO.Stream})">
+            <summary>
+            Swagger中间件
+            </summary>
+            <param name="app"></param>
+            <param name="streamHtml"></param>
+        </member>
+        <member name="M:TplDemo.Helper.Swagger.SwaggerSetup.AddSwaggerSetup(Microsoft.Extensions.DependencyInjection.IServiceCollection)">
+            <summary>
+            扩展 Swagger 启动服务
+            依赖 Microsoft.Extensions.DependencyInjection.Abstractions(V:3.1.5)
+            Swashbuckle.AspNetCore.Swagger
+            Swashbuckle.AspNetCore.SwaggerGen
+            Swashbuckle.AspNetCore.SwaggerUI
+            </summary>
+            <param name="service"></param>
+        </member>
+    </members>
+</doc>
