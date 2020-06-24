@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TplDemo.Comment\TplDemo.Comment.csproj" />
+    <ProjectReference Include="..\TplDemo.Model\TplDemo.Model.csproj" />
   </ItemGroup>
 
 </Project>

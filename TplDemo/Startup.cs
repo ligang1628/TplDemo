@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TplDemo.Comment;
 using TplDemo.Extensions.ServiceExtensions;
+using TplDemo.Extensions.ServiceExtensions.Database;
 using TplDemo.Helper.Swagger;
 
 namespace TplDemo
@@ -35,7 +36,16 @@ namespace TplDemo
             services.AddSwaggerSetup();
             // Cors 跨域
             services.AddCorsSetup(CorsName);
-
+            #region 连接数据库
+            if (bool.Parse(Appsettings.App(new string[] { "Database", "MSSQL", "Enable" })))
+            {
+                services.AddMSSQLSetup();
+            }
+            else
+            {
+                services.AddMYSQLSetup();
+            }
+            #endregion
             services.AddControllers();
         }
 
