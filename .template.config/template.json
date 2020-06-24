@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  // 【作者】 必须
+  "author": "Gang Li",
+  // 【对应模板的Tags】 必须
+  "classifications": [ "Web/WebAPI" ],
+  // 【用户应看到的模板名称】 必须
+  "name": "TplDemo",
+  // 【对应模板的唯一名称】 可选
+  "identity": "TplDemoTemplate",
+  // 【对应模板的简称】 必须
+  "shortName": "tpl",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  // 【要替换的名字】 可选  它的值会替换指定的项目名，正常是把项目名赋值在这里。如果不指定，创建的项目就和样例项目保持一致。
+  "sourceName": "TplDemo",
+  // 【添加目录】 可选
+  "preferNameDirectory": true
+}
