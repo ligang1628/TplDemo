@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TplDemo.Comment;
+using TplDemo.Extensions.ServiceExtensions;
 using TplDemo.Helper.Swagger;
 
 namespace TplDemo
@@ -23,13 +24,17 @@ namespace TplDemo
         }
 
         public IConfiguration Configuration { get; }
+        public string CorsName = "Tpl";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // µ¥Àý×¢Èë Appsettings
             services.AddSingleton(new Appsettings(Configuration));
-
+            // Swagger
             services.AddSwaggerSetup();
+            // Cors ¿çÓò
+            services.AddCorsSetup(CorsName);
 
             services.AddControllers();
         }
@@ -60,7 +65,8 @@ namespace TplDemo
                 c.RoutePrefix = "";
             });
             #endregion
-
+            //Cors
+            app.UseCors(CorsName);
 
             app.UseRouting();
 
