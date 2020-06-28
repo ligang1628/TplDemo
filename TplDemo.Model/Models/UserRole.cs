@@ -22,5 +22,6 @@ namespace TplDemo.Model.Models
         /// </summary>
         public bool Enabled { get; set; }
         public virtual ICollection<UserRoleRel> UserRoleRel { get; set; }
+        public virtual ICollection<UserModuleRel> UserModuleRel { get; set; }
     }
 }

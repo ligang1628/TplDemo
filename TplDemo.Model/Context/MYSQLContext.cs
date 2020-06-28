@@ -30,6 +30,8 @@ namespace TplDemo.Model.Context
         public DbSet<UserInfo> UserInfo { get; set; }
         public DbSet<UserRole> UserRole { get; set; }
         public DbSet<UserRoleRel> UserRoleRel { get; set; }
+        public DbSet<UserModule> UserModule { get; set; }
+        public DbSet<UserModuleRel> UserModuleRel { get; set; }
 
     }
 }
