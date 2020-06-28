@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TplDemo.Comment;
 using TplDemo.Extensions.ServiceExtensions;
+using TplDemo.Extensions.ServiceExtensions.AutofacModule;
 using TplDemo.Extensions.ServiceExtensions.Database;
 using TplDemo.Helper.Swagger;
 
@@ -47,6 +49,17 @@ namespace TplDemo
             }
             #endregion
             services.AddControllers();
+        }
+
+        /// <summary>
+        /// °²×°NuGet°ü
+        /// Autofac.Extensions.DependencyInjection
+        /// Autofac.Extras.DynamicProxy
+        /// </summary>
+        /// <param name="builder"></param>
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            builder.RegisterModule(new AutofacModuleRegister());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

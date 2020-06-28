@@ -4,6 +4,18 @@
         <name>TplDemo</name>
     </assembly>
     <members>
+        <member name="M:TplDemo.Controllers.WeatherForecastController.Get">
+            <summary>
+            get
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TplDemo.Controllers.WeatherForecastController.GetSystem">
+            <summary>
+            getsystem
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:TplDemo.Helper.Swagger.SwaggerMiddle.UseSwaggerMiddle(Microsoft.AspNetCore.Builder.IApplicationBuilder,System.Func{System.IO.Stream})">
             <summary>
             Swagger中间件
@@ -20,6 +32,14 @@
             Swashbuckle.AspNetCore.SwaggerUI
             </summary>
             <param name="service"></param>
+        </member>
+        <member name="M:TplDemo.Startup.ConfigureContainer(Autofac.ContainerBuilder)">
+            <summary>
+            安装NuGet包
+            Autofac.Extensions.DependencyInjection
+            Autofac.Extras.DynamicProxy
+            </summary>
+            <param name="builder"></param>
         </member>
     </members>
 </doc>

@@ -16,11 +16,14 @@
 
   <ItemGroup>
 
-    <!--Swagger-->
+    
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <!--Swagger-->
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="5.4.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="5.4.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="5.4.1" />
@@ -29,6 +32,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Tpl.Extensions\TplDemo.Extensions.csproj" />
     <ProjectReference Include="..\TplDemo.Comment\TplDemo.Comment.csproj" />
+    <ProjectReference Include="..\TplDemo.IRepository\TplDemo.IRepository.csproj" />
+    <ProjectReference Include="..\TplDemo.IServices\TplDemo.IServices.csproj" />
   </ItemGroup>
   
   <ItemGroup>
