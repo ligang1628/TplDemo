@@ -44,7 +44,7 @@ namespace TplDemo.Controllers
         [HttpGet]
         public async Task<JsonResult> GetSystem()
         {
-            return new JsonResult(await system.GetUserModule());
+            return new JsonResult(new { v1 = await system.GetUserModule(), v2 = await system.GetUserModuleVM() });
         }
     }
 }

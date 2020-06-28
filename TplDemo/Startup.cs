@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using TplDemo.Comment;
 using TplDemo.Extensions.ServiceExtensions;
 using TplDemo.Extensions.ServiceExtensions.AutofacModule;
+using TplDemo.Extensions.ServiceExtensions.AutoMap;
 using TplDemo.Extensions.ServiceExtensions.Database;
 using TplDemo.Helper.Swagger;
 
@@ -38,6 +39,8 @@ namespace TplDemo
             services.AddSwaggerSetup();
             // Cors 跨域
             services.AddCorsSetup(CorsName);
+            // AutoMapper
+            services.AddAutoMapperSetup();
             #region 连接数据库
             if (bool.Parse(Appsettings.App(new string[] { "Database", "MSSQL", "Enable" })))
             {
