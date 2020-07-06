@@ -7,15 +7,18 @@ using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 using TplDemo.Comment;
 using TplDemo.Extensions.ServiceExtensions;
 using TplDemo.Extensions.ServiceExtensions.AutofacModule;
 using TplDemo.Extensions.ServiceExtensions.AutoMap;
 using TplDemo.Extensions.ServiceExtensions.Database;
+using TplDemo.Extensions.ServiceExtensions.Log;
 using TplDemo.Helper.Swagger;
 
 namespace TplDemo
@@ -35,6 +38,7 @@ namespace TplDemo
         {
             // 单例注入 Appsettings
             services.AddSingleton(new Appsettings(Configuration));
+
             // Swagger
             services.AddSwaggerSetup();
             // Cors 跨域
@@ -72,8 +76,6 @@ namespace TplDemo
             {
                 app.UseDeveloperExceptionPage();
             }
-
-
             #region Swagger
             // 若采用Nginx发布，则采用以下方式
             //app.UseSwaggerMiddle(() => GetType().GetTypeInfo().Assembly.GetManifestResourceStream("TplDemo.index.html"));

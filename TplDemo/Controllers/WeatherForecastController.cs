@@ -34,6 +34,9 @@ namespace TplDemo.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
+            _logger.LogInformation("hello", "this is info");
+            _logger.LogWarning("hello");
+            _logger.LogTrace("ces");
             return Summaries;
         }
 
