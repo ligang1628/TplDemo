@@ -1,4 +1,5 @@
-﻿# 1、安装最新 NLog、NLog.Web.AspNetCore
+﻿# 1、NLog
+> NLog、NLog.Web.AspNetCore
 
 # 2、Log4net
 > Microsoft.Extensions.Logging.Log4Net.AspNetCore
