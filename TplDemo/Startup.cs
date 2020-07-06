@@ -70,7 +70,7 @@ namespace TplDemo
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory logger)
         {
             if (env.IsDevelopment())
             {
@@ -95,6 +95,8 @@ namespace TplDemo
             #endregion
             //Cors
             app.UseCors(CorsName);
+
+            logger.AddLog4Net();
 
             app.UseRouting();
 

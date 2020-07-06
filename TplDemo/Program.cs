@@ -17,7 +17,6 @@ namespace TplDemo
     {
         public static void Main(string[] args)
         {
-            var logger = NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
 
             var host = CreateHostBuilder(args).Build();
 
@@ -32,7 +31,6 @@ namespace TplDemo
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex.InnerException?.ToString() ?? ex.Message);
                     throw ex;
                 }
             }
@@ -44,15 +42,15 @@ namespace TplDemo
             Host.CreateDefaultBuilder(args)
             // ÒÀÀµ×¢Èë
             .UseServiceProviderFactory(new AutofacServiceProviderFactory())
-                .ConfigureLogging((context, logBuilder) =>
+                .ConfigureLogging((context, logbuild) =>
                 {
-                    logBuilder.AddFilter("System", LogLevel.Warning);
-                    logBuilder.AddFilter("Microsoft", LogLevel.Warning);
-                    logBuilder.SetMinimumLevel(LogLevel.Trace);
+                    logbuild.AddFilter("System", LogLevel.Warning);
+                    logbuild.AddFilter("Microsoft", LogLevel.Warning);
+                    logbuild.AddLog4Net();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                }).UseNLog();
+                });
     }
 }
