@@ -11,36 +11,49 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using TplDemo.Comment;
+using TplDemo.Comment.Hubs;
+using TplDemo.Comment.LogHelper;
+using TplDemo.Extensions.Middleware;
 using TplDemo.Extensions.ServiceExtensions;
 using TplDemo.Extensions.ServiceExtensions.AutofacModule;
 using TplDemo.Extensions.ServiceExtensions.AutoMap;
 using TplDemo.Extensions.ServiceExtensions.Database;
+using TplDemo.Filter;
 using TplDemo.Helper.Swagger;
 
 namespace TplDemo
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostEnvironment Env)
         {
             Configuration = configuration;
+            this.Env = Env;
         }
 
         public IConfiguration Configuration { get; }
         public string CorsName = "Tpl";
+        private readonly IHostEnvironment Env;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // 单例注入 Appsettings
             services.AddSingleton(new Appsettings(Configuration));
+            services.AddSingleton(new LogLock(Env.ContentRootPath));
+
             // Swagger
             services.AddSwaggerSetup();
             // Cors 跨域
             services.AddCorsSetup(CorsName);
             // AutoMapper
             services.AddAutoMapperSetup();
+            // 使用Signalr
+            services.AddSignalR().AddNewtonsoftJsonProtocol();
+
             #region 连接数据库
             if (bool.Parse(Appsettings.App(new string[] { "Database", "MSSQL", "Enable" })))
             {
@@ -51,7 +64,20 @@ namespace TplDemo
                 services.AddMYSQLSetup();
             }
             #endregion
-            services.AddControllers();
+            services.AddControllers(o =>
+            {
+                // 全局异常过滤
+                o.Filters.Add(typeof(GlobalExceptionsFilter));
+            })
+                    .AddNewtonsoftJson(options =>
+            {
+                //忽略循环引用
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                //不使用驼峰样式的key
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                //设置时间格式
+                //options.SerializerSettings.DateFormatString = "yyyy-MM-dd";
+            });
         }
 
         /// <summary>
@@ -72,8 +98,12 @@ namespace TplDemo
             {
                 app.UseDeveloperExceptionPage();
             }
-
-
+            // 请求响应日志
+            app.UseReuestResponseLog();
+            // SignalR
+            app.UseSignalRSendMiddle();
+            // 记录ip请求
+            app.UseIPLogMildd();
             #region Swagger
             // 若采用Nginx发布，则采用以下方式
             //app.UseSwaggerMiddle(() => GetType().GetTypeInfo().Assembly.GetManifestResourceStream("TplDemo.index.html"));
@@ -91,9 +121,14 @@ namespace TplDemo
                 c.RoutePrefix = "";
             });
             #endregion
-            //Cors
+            // Cors 跨域
             app.UseCors(CorsName);
-
+            // 使用静态文件
+            app.UseStaticFiles();
+            // 使用 cookie
+            app.UseCookiePolicy();
+            // 返回错误码
+            app.UseStatusCodePages();
             app.UseRouting();
 
             app.UseAuthorization();
@@ -101,6 +136,8 @@ namespace TplDemo
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapHub<ChatHub>("/api/chathub");
             });
         }
     }
