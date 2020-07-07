@@ -43,6 +43,7 @@ namespace TplDemo.Helper.Swagger
                         }
                     });
                     c.OrderActionsBy(d => d.RelativePath);
+                    
                 });
 
                 try
@@ -55,7 +56,7 @@ namespace TplDemo.Helper.Swagger
                 {
                     // 错误日志
                 }
-
+                
                 // JWT Bearer认证
 
             });

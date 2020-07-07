@@ -5,23 +5,27 @@ using System.Text;
 
 namespace TplDemo.Comment.MemoryCache
 {
+    /// <summary>
+    /// 实例化缓存接口ICaching
+    /// </summary>
     public class MemoryCaching : ICaching
     {
-        private readonly IMemoryCache cache;
-
+        //引用Microsoft.Extensions.Caching.Memory;这个和.net 还是不一样，没有了Httpruntime了
+        private readonly IMemoryCache _cache;
+        //还是通过构造函数的方法，获取
         public MemoryCaching(IMemoryCache cache)
         {
-            this.cache = cache;
+            _cache = cache;
         }
 
         public object Get(string cacheKey)
         {
-            return cache.Get(cacheKey);
+            return _cache.Get(cacheKey);
         }
 
         public void Set(string cacheKey, object cacheValue)
         {
-            cache.Set(cacheKey, cacheValue);
+            _cache.Set(cacheKey, cacheValue, TimeSpan.FromSeconds(7200));
         }
     }
 }

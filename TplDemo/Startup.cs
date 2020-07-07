@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +23,6 @@ using TplDemo.Extensions.ServiceExtensions;
 using TplDemo.Extensions.ServiceExtensions.AutofacModule;
 using TplDemo.Extensions.ServiceExtensions.AutoMap;
 using TplDemo.Extensions.ServiceExtensions.Database;
-using TplDemo.Extensions.ServiceExtensions.Memory;
 using TplDemo.Filter;
 using TplDemo.Helper.Swagger;
 
@@ -46,19 +46,22 @@ namespace TplDemo
             // 单例注入 Appsettings
             services.AddSingleton(new Appsettings(Configuration));
             services.AddSingleton(new LogLock(Env.ContentRootPath));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+
+            // MemoryCache
+            services.AddMemoryCache();
             //services.AddMemoryCacheSetup();
+            // 性能分析
+            services.AddMiniProfilerSetup();
             // Swagger
             services.AddSwaggerSetup();
-
             // AutoMapper
             services.AddAutoMapperSetup();
             // Cors 跨域
             services.AddCorsSetup(CorsName);
-            // 性能分析
-            services.AddMiniProfilerSetup();
             // 使用Signalr
-            //services.AddSignalR().AddNewtonsoftJsonProtocol();
+            services.AddSignalR().AddNewtonsoftJsonProtocol();
 
             #region 连接数据库
             if (bool.Parse(Appsettings.App(new string[] { "Database", "MSSQL", "Enable" })))
@@ -100,11 +103,11 @@ namespace TplDemo
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // 请求响应日志
-            //app.UseReuestResponseLog();
+            app.UseReuestResponseLog();
             // SignalR
-            //app.UseSignalRSendMiddle();
+            app.UseSignalRSendMiddle();
             // 记录ip请求
-            //app.UseIPLogMildd();
+            app.UseIPLogMildd();
             // 性能分析
             app.UseMiniProfiler();
             if (env.IsDevelopment())
@@ -123,10 +126,11 @@ namespace TplDemo
                 var ApiName = Appsettings.App(new string[] { "Startup", "ApiName" });
                 typeof(ApiVersion).GetEnumNames().ToList().ForEach(v =>
                 {
-                    c.SwaggerEndpoint($"/swagger/{v}/swagger.json", $"{ ApiName}{v}");
+                    c.SwaggerEndpoint($"/swagger/{v}/swagger.json", $"{ApiName}{v}");
                 });
                 // 路径配置，设置为空，表示直接在根域名（localhost:7000）访问该文件,注意localhost:7000/swagger是访问不到的，去launchSettings.json把launchUrl去掉，如果你想换一个路径，直接写名字即可，比如直接写c.RoutePrefix = "doc";
                 c.RoutePrefix = "";
+                c.HeadContent = @"<script async='async' id='mini-profiler' src='/profiler/includes.min.js?v=4.1.0+c940f0f28d1' data-version='4.1.0+c940f0f28d' data-path='/profiler/' data-current-id='4ec7c742-49d4-4eaf-8281-3c1e0efa8888' data-ids='4ec7c742-49d4-4eaf-8281-3c1e0efa8888' data-position='Left' data-authorized='true' data-max-traces='5' data-toggle-shortcut='Alt+P' data-trivial-milliseconds='2.0' data-ignored-duplicate-execute-types='Open,OpenAsync,Close,CloseAsync'></script>";
             });
             #endregion
             // Cors 跨域
@@ -149,7 +153,7 @@ namespace TplDemo
             {
                 endpoints.MapControllers();
 
-                //endpoints.MapHub<ChatHub>("/api/chathub");
+                endpoints.MapHub<ChatHub>("/api/chathub");
             });
         }
     }

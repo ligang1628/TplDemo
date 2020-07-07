@@ -94,7 +94,7 @@ namespace TplDemo.Extensions.AOP
             {
                 LogEx(ex, dataIntercept);
             }
-            //hubContext.Clients.All.SendAsync("ReceiveUpdate", LogLock.GetLogData()).Wait();
+            hubContext.Clients.All.SendAsync("ReceiveUpdate", LogLock.GetLogData()).Wait();
         }
 
         private async Task SuccessAction(IInvocation invocation, string dataIntercept, object o = null)

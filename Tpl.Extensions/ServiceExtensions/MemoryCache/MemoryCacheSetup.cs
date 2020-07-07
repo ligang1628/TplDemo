@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using TplDemo.Comment.MemoryCache;
 
-namespace TplDemo.Extensions.ServiceExtensions.Memory
+namespace TplDemo.Extensions.ServiceExtensions
 {
     /// <summary>
     /// Memory缓存 启动服务

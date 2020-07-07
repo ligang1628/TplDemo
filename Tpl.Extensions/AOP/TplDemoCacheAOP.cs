@@ -1,29 +1,26 @@
 ﻿using Castle.DynamicProxy;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
+using TplDemo.Comment.Attrubute;
+using TplDemo.Comment.Encrpy;
 using TplDemo.Comment.MemoryCache;
 
 namespace TplDemo.Extensions.AOP
 {
-    /// <summary>
-    /// 面向切面的缓存使用
-    /// 缓存的拦截
-    /// </summary>
-    public class TplDemoCacheAOP : CacheAOPbase
+    public abstract class TplDemoCacheAOP : CacheAOPbase
     {
-        private readonly ICaching cache;
-
+        //通过注入的方式，把缓存操作接口通过构造函数注入
+        private readonly ICaching _cache;
         public TplDemoCacheAOP(ICaching cache)
         {
-            this.cache = cache;
+            _cache = cache;
         }
 
-        /// <summary>
-        /// Intercept：拦截
-        /// </summary>
-        /// <param name="invocation">翻译：调用</param>
+        //Intercept方法是拦截的关键所在，也是IInterceptor接口中的唯一定义
         public override void Intercept(IInvocation invocation)
         {
             var method = invocation.MethodInvocationTarget ?? invocation.Method;
@@ -32,9 +29,9 @@ namespace TplDemo.Extensions.AOP
             if (method.GetCustomAttributes(true).FirstOrDefault(x => x.GetType() == typeof(CachingAttribute)) is CachingAttribute qCachingAttribute)
             {
                 //获取自定义缓存键
-                var cacheKey = CustomerCacheKey(invocation);
+                var cacheKey = CustomCacheKey(invocation);
                 //根据key获取相应的缓存值
-                var cacheValue = cache.Get(cacheKey);
+                var cacheValue = _cache.Get(cacheKey);
                 if (cacheValue != null)
                 {
                     //将当前获取到的缓存值，赋值给当前执行方法
@@ -46,7 +43,7 @@ namespace TplDemo.Extensions.AOP
                 //存入缓存
                 if (!string.IsNullOrWhiteSpace(cacheKey))
                 {
-                    cache.Set(cacheKey, invocation.ReturnValue);
+                    _cache.Set(cacheKey, invocation.ReturnValue);
                 }
             }
             else
@@ -54,5 +51,6 @@ namespace TplDemo.Extensions.AOP
                 invocation.Proceed();//直接执行被拦截方法
             }
         }
+
     }
 }

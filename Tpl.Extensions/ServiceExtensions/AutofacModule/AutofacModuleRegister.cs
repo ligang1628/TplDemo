@@ -35,22 +35,21 @@ namespace TplDemo.Extensions.ServiceExtensions.AutofacModule
             //    builder.RegisterType<TplDemoRedisCacheAOP>();
             //    cacheType.Add(typeof(BlogRedisCacheAOP));
             //}
-            //if (bool.Parse(Appsettings.App(new string[] { "AppSettings", "MemoryCachingAOP", "Enabled" })))
-            //{
-            //    builder.RegisterType<TplDemoCacheAOP>();
-            //    cacheType.Add(typeof(TplDemoCacheAOP));
-            //}
+            if (bool.Parse(Appsettings.App(new string[] { "AppSettings", "MemoryCachingAOP", "Enabled" })))
+            {
+                builder.RegisterType<TplDemoCacheAOP>();
+                cacheType.Add(typeof(TplDemoCacheAOP));
+            }
             //if (Appsettings.App(new string[] { "AppSettings", "TranAOP", "Enabled" }).ObjToBool())
             //{
             //    builder.RegisterType<BlogTranAOP>();
             //    cacheType.Add(typeof(BlogTranAOP));
             //}
-            //if (bool.Parse(Appsettings.App(new string[] { "AppSettings", "LogAOP", "Enabled" })))
-            //{
-
-            //}
-            builder.RegisterType<TplDemoLogAOP>();
-            cacheType.Add(typeof(TplDemoLogAOP));
+            if (bool.Parse(Appsettings.App(new string[] { "AppSettings", "LogAOP", "Enabled" })))
+            {
+                builder.RegisterType<TplDemoLogAOP>();
+                cacheType.Add(typeof(TplDemoLogAOP));
+            }
 
             // 获取 Serivces.dll 程序集服务，并注册
             var assemblysServices = Assembly.LoadFrom(servicesDll);

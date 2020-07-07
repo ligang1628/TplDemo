@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TplDemo.Extensions
+namespace TplDemo.Comment.Attrubute
 {
     /// <summary>
     /// 这个Attribute就是使用时候的验证，把它添加到要缓存数据的方法中，即可完成缓存的操作。
@@ -11,8 +11,9 @@ namespace TplDemo.Extensions
     public class CachingAttribute : Attribute
     {
         /// <summary>
-        /// 缓存绝对过期时间
+        /// 缓存绝对过期时间（分钟）
         /// </summary>
         public int AbsoluteExpiration { get; set; } = 30;
+
     }
 }

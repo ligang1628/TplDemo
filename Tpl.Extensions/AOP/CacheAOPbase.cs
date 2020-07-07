@@ -17,15 +17,16 @@ namespace TplDemo.Extensions.AOP
         /// <param name="invocation"></param>
         public abstract void Intercept(IInvocation invocation);
 
-
-        protected string CustomerCacheKey(IInvocation invocation)
+        /// <summary>
+        /// 自定义缓存的key
+        /// </summary>
+        /// <param name="invocation"></param>
+        /// <returns></returns>
+        protected string CustomCacheKey(IInvocation invocation)
         {
-            // 获取类型名称
             var typeName = invocation.TargetType.Name;
-            // 获取方法名称
             var methodName = invocation.Method.Name;
-            // 获取参数列表，最多三个
-            var methodArguments = invocation.Arguments.Select(GetArgumentValue).Take(3).ToList();
+            var methodArguments = invocation.Arguments.Select(GetArgumentValue).Take(3).ToList();//获取参数列表，最多三个
 
             string key = $"{typeName}:{methodName}:";
             foreach (var param in methodArguments)
@@ -34,7 +35,6 @@ namespace TplDemo.Extensions.AOP
             }
 
             return key.TrimEnd(':');
-
         }
 
         /// <summary>
@@ -46,6 +46,7 @@ namespace TplDemo.Extensions.AOP
         {
             if (arg is DateTime || arg is DateTime?)
                 return ((DateTime)arg).ToString("yyyyMMddHHmmss");
+
             if (arg is string || arg is ValueType || arg is Nullable)
                 return arg.ToString();
 
@@ -57,11 +58,10 @@ namespace TplDemo.Extensions.AOP
                     var result = Resolve(obj);
                     return MD5Helper.MD5Encrpy16(result);
                 }
-            }
-            // 判断参数是否为 类
-            else if (arg.GetType().IsClass)
-            {
-                return MD5Helper.MD5Encrpy16(JsonConvert.SerializeObject(arg));
+                else if (arg.GetType().IsClass)
+                {
+                    return MD5Helper.MD5Encrpy16(JsonConvert.SerializeObject(arg));
+                }
             }
             return string.Empty;
         }
@@ -77,17 +77,15 @@ namespace TplDemo.Extensions.AOP
             if (expression is BinaryExpression)
             {
                 BinaryExpression binary = expression as BinaryExpression;
-                // 解析 x=>x.Name=="123" x.Age==123这类
-                if (binary.Left is MemberExpression && binary.Right is ConstantExpression)
+                if (binary.Left is MemberExpression && binary.Right is ConstantExpression)//解析x=>x.Name=="123" x.Age==123这类
                     return ResolveFunc(binary.Left, binary.Right, binary.NodeType);
-                // 解析 x=>x.Name.Contains("xxx")==false 这类
-                if (binary.Left is MethodCallExpression && binary.Right is ConstantExpression)
+                if (binary.Left is MethodCallExpression && binary.Right is ConstantExpression)//解析x=>x.Name.Contains("xxx")==false这类的
                 {
                     object value = (binary.Right as ConstantExpression).Value;
                     return ResolveLinqToObject(binary.Left, value, binary.NodeType);
                 }
-                // 解析 x=>x.Date == DateTime.Now
-                if ((binary.Left is MemberExpression && binary.Right is MemberExpression) || (binary.Left is MemberExpression && binary.Right is UnaryExpression))
+                if ((binary.Left is MemberExpression && binary.Right is MemberExpression)
+                    || (binary.Left is MemberExpression && binary.Right is UnaryExpression))//解析x=>x.Date==DateTime.Now这种
                 {
                     LambdaExpression lambda = Expression.Lambda(binary.Right);
                     Delegate fn = lambda.Compile();
@@ -95,7 +93,6 @@ namespace TplDemo.Extensions.AOP
                     return ResolveFunc(binary.Left, value, binary.NodeType);
                 }
             }
-
             if (expression is UnaryExpression)
             {
                 UnaryExpression unary = expression as UnaryExpression;
@@ -127,7 +124,6 @@ namespace TplDemo.Extensions.AOP
             var Right = Resolve(body.Right);
             string Result = string.Format("({0} {1} {2})", Left, Operator, Right);
             return Result;
-
         }
 
         private static string GetOperator(ExpressionType expressiontype)
