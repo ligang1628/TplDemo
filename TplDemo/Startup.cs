@@ -16,11 +16,13 @@ using Newtonsoft.Json.Serialization;
 using TplDemo.Comment;
 using TplDemo.Comment.Hubs;
 using TplDemo.Comment.LogHelper;
+using TplDemo.Extensions;
 using TplDemo.Extensions.Middleware;
 using TplDemo.Extensions.ServiceExtensions;
 using TplDemo.Extensions.ServiceExtensions.AutofacModule;
 using TplDemo.Extensions.ServiceExtensions.AutoMap;
 using TplDemo.Extensions.ServiceExtensions.Database;
+using TplDemo.Extensions.ServiceExtensions.Memory;
 using TplDemo.Filter;
 using TplDemo.Helper.Swagger;
 
@@ -45,14 +47,18 @@ namespace TplDemo
             services.AddSingleton(new Appsettings(Configuration));
             services.AddSingleton(new LogLock(Env.ContentRootPath));
 
+            //services.AddMemoryCacheSetup();
             // Swagger
             services.AddSwaggerSetup();
-            // Cors 跨域
-            services.AddCorsSetup(CorsName);
+
             // AutoMapper
             services.AddAutoMapperSetup();
+            // Cors 跨域
+            services.AddCorsSetup(CorsName);
+            // 性能分析
+            services.AddMiniProfilerSetup();
             // 使用Signalr
-            services.AddSignalR().AddNewtonsoftJsonProtocol();
+            //services.AddSignalR().AddNewtonsoftJsonProtocol();
 
             #region 连接数据库
             if (bool.Parse(Appsettings.App(new string[] { "Database", "MSSQL", "Enable" })))
@@ -68,8 +74,7 @@ namespace TplDemo
             {
                 // 全局异常过滤
                 o.Filters.Add(typeof(GlobalExceptionsFilter));
-            })
-                    .AddNewtonsoftJson(options =>
+            }).AddNewtonsoftJson(options =>
             {
                 //忽略循环引用
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -94,16 +99,19 @@ namespace TplDemo
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // 请求响应日志
+            //app.UseReuestResponseLog();
+            // SignalR
+            //app.UseSignalRSendMiddle();
+            // 记录ip请求
+            //app.UseIPLogMildd();
+            // 性能分析
+            app.UseMiniProfiler();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            // 请求响应日志
-            app.UseReuestResponseLog();
-            // SignalR
-            app.UseSignalRSendMiddle();
-            // 记录ip请求
-            app.UseIPLogMildd();
+
             #region Swagger
             // 若采用Nginx发布，则采用以下方式
             //app.UseSwaggerMiddle(() => GetType().GetTypeInfo().Assembly.GetManifestResourceStream("TplDemo.index.html"));
@@ -131,13 +139,17 @@ namespace TplDemo
             app.UseStatusCodePages();
             app.UseRouting();
 
+            // 认证
+            //app.UseAuthentication();
+            // 授权
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
 
-                endpoints.MapHub<ChatHub>("/api/chathub");
+                //endpoints.MapHub<ChatHub>("/api/chathub");
             });
         }
     }

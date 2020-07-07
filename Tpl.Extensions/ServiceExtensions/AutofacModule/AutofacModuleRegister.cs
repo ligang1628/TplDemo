@@ -1,11 +1,14 @@
 ﻿using Autofac;
 using Autofac.Core;
 using Autofac.Core.Registration;
+using Autofac.Extras.DynamicProxy;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using TplDemo.Comment;
+using TplDemo.Extensions.AOP;
 
 namespace TplDemo.Extensions.ServiceExtensions.AutofacModule
 {
@@ -25,11 +28,39 @@ namespace TplDemo.Extensions.ServiceExtensions.AutofacModule
                 throw new Exception(msg);
             }
 
+            // AOP 开关，如果想要打开指定的功能，只需要在 appsettigns.json 对应对应 true 就行。
+            var cacheType = new List<Type>();
+            //if (Appsettings.App(new string[] { "AppSettings", "RedisCachingAOP", "Enabled" }).ObjToBool())
+            //{
+            //    builder.RegisterType<TplDemoRedisCacheAOP>();
+            //    cacheType.Add(typeof(BlogRedisCacheAOP));
+            //}
+            //if (bool.Parse(Appsettings.App(new string[] { "AppSettings", "MemoryCachingAOP", "Enabled" })))
+            //{
+            //    builder.RegisterType<TplDemoCacheAOP>();
+            //    cacheType.Add(typeof(TplDemoCacheAOP));
+            //}
+            //if (Appsettings.App(new string[] { "AppSettings", "TranAOP", "Enabled" }).ObjToBool())
+            //{
+            //    builder.RegisterType<BlogTranAOP>();
+            //    cacheType.Add(typeof(BlogTranAOP));
+            //}
+            //if (bool.Parse(Appsettings.App(new string[] { "AppSettings", "LogAOP", "Enabled" })))
+            //{
+
+            //}
+            builder.RegisterType<TplDemoLogAOP>();
+            cacheType.Add(typeof(TplDemoLogAOP));
+
             // 获取 Serivces.dll 程序集服务，并注册
             var assemblysServices = Assembly.LoadFrom(servicesDll);
             builder.RegisterAssemblyTypes(assemblysServices)
                 .AsImplementedInterfaces()
-                .InstancePerDependency();
+                .InstancePerDependency()
+                //引用Autofac.Extras.DynamicProxy;
+                .EnableInterfaceInterceptors()
+                ////允许将拦截器服务的列表分配给注册。
+                .InterceptedBy(cacheType.ToArray());
 
             // 获取 Repository.dll 程序集服务，并注册
             var assemblysRepository = Assembly.LoadFrom(repositoryDll);
