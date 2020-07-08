@@ -50,8 +50,7 @@ namespace TplDemo
 
 
             // MemoryCache
-            services.AddMemoryCache();
-            //services.AddMemoryCacheSetup();
+            services.AddMemoryCacheSetup();
             // ÐÔÄÜ·ÖÎö
             services.AddMiniProfilerSetup();
             // Swagger
