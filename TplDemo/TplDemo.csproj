@@ -44,7 +44,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Update="Nlog.md">
+    <None Update="log4net.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
